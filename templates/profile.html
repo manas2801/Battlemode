@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>👤 Profile</h1>
+
+<div class="stat-card">
+
+    {% if player.avatar %}
+    <img src="{{ player.avatar.url }}" width="120" style="border-radius:50%; margin-bottom:15px;">
+{% else %}
+    <div style="width:120px;height:120px;border-radius:50%;background:#1e293b;display:flex;align-items:center;justify-content:center;margin-bottom:15px;font-size:40px;">
+        👤
+    </div>
+{% endif %}
+
+    <h2>{{ request.user.username }}</h2>
+    <p>{{ request.user.email }}</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="avatar">
+        <br><br>
+        <button class="btn">Upload Avatar</button>
+    </form>
+
+</div>
+
+{% endblock %}

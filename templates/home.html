@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Welcome, {{ request.user.username }} ⚔</h1>
+<p class="subtitle">Your daily battle arena is ready.</p>
+
+<!-- LEVEL UP TRIGGER (FIXED) -->
+{% if player.xp <= 10 %}
+<div id="levelup-trigger" data-levelup="true"></div>
+{% else %}
+<div id="levelup-trigger" data-levelup="false"></div>
+{% endif %}
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <h3>Level</h3>
+        <h2>{{ player.level }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <h3>XP</h3>
+        <h2>{{ player.xp }} / 100</h2>
+
+        <div class="progress">
+            <div class="progress-fill xp-fill" data-width="{{ player.xp }}"></div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Health</h3>
+        <h2>{{ player.health }}%</h2>
+
+        <div class="progress">
+            <div class="progress-fill health-fill" data-width="{{ player.health }}"></div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3>Streak</h3>
+        <h2>{{ player.streak }} Days 🔥</h2>
+    </div>
+
+</div>
+
+<h2 class="section-title">Quick Missions</h2>
+
+<div class="mission-grid">
+{% for mission in missions %}
+    <div class="mission-card">
+        <h3>{{ mission.title }}</h3>
+        <p>{{ mission.description }}</p>
+
+        <span class="xp-badge floating-xp">+{{ mission.xp_reward }} XP</span>
+
+        <br><br>
+
+        {% if mission.status == 'approved' %}
+            <span class="status approved">Approved ✅</span>
+
+        {% elif mission.status == 'submitted' %}
+            <span class="status submitted">Waiting Approval ⏳</span>
+
+        {% elif mission.status == 'rejected' %}
+            <span class="status rejected">Rejected ❌</span>
+            <br>
+            <a href="{% url 'submit_proof' mission.id %}">
+                <button class="btn">Submit Again</button>
+            </a>
+
+        {% else %}
+            <span class="status pending">Pending ⚔</span>
+            <br>
+            <a href="{% url 'submit_proof' mission.id %}">
+                <button class="btn">Submit Proof</button>
+            </a>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No missions added yet.</p>
+{% endfor %}
+</div>
+
+<!-- XP BAR ANIMATION -->
+<script>
+document.querySelectorAll('.progress-fill').forEach(bar => {
+    let width = bar.getAttribute('data-width');
+    setTimeout(() => {
+        bar.style.width = width + '%';
+    }, 300);
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const trigger = document.getElementById('levelup-trigger');
+
+    if (trigger && trigger.dataset.levelup === "true") {
+        const popup = document.createElement('div');
+        popup.innerHTML = "⚡ LEVEL UP!";
+        popup.className = "levelup-popup";
+
+        document.body.appendChild(popup);
+
+        setTimeout(() => {
+            popup.remove();
+        }, 2200);
+    }
+});
+</script>
+
+{% endblock %}

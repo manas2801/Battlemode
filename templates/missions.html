@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>🎯 Missions Arena</h1>
+<p class="subtitle">Complete missions, submit proof, and earn XP after approval.</p>
+
+<div class="mission-grid">
+{% for mission in missions %}
+    <div class="mission-card">
+        <h3>{{ mission.title }}</h3>
+        <p>{{ mission.description }}</p>
+        <span class="xp-badge">+{{ mission.xp_reward }} XP</span>
+
+        <br><br>
+
+        {% if mission.status == 'approved' %}
+            <span class="status approved">Approved ✅</span>
+        {% elif mission.status == 'submitted' %}
+            <span class="status submitted">Waiting Approval ⏳</span>
+        {% elif mission.status == 'rejected' %}
+            <span class="status rejected">Rejected ❌</span>
+            <br>
+            <a href="{% url 'submit_proof' mission.id %}">
+                <button class="btn">Submit Again</button>
+            </a>
+        {% else %}
+            <span class="status pending">Pending ⚔</span>
+            <br>
+            <a href="{% url 'submit_proof' mission.id %}">
+                <button class="btn">Submit Proof</button>
+            </a>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No missions added yet.</p>
+{% endfor %}
+</div>
+
+{% endblock %}

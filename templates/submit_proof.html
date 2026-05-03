@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Submit Proof</h1>
+<p>Mission: {{ mission.title }}</p>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <textarea name="proof_text" placeholder="Write what you completed..." required></textarea>
+    <br><br>
+
+    <input type="file" name="proof_image">
+    <br><br>
+
+    <button type="submit">Submit Proof</button>
+</form>
+
+{% endblock %}

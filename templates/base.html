@@ -1,0 +1,479 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BattleMode</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #020617;
+            color: white;
+        }
+
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #050816;
+            padding: 35px 25px;
+            border-right: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #38bdf8;
+            text-shadow: 0 0 15px #38bdf8;
+            margin-bottom: 45px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 17px;
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            transform: translateX(6px);
+        }
+
+        .topbar {
+            margin-left: 260px;
+            height: 70px;
+            background: #050816;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 35px;
+        }
+
+        .topbar span {
+            color: #cbd5e1;
+            font-size: 17px;
+        }
+
+        .topbar a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .main {
+            margin-left: 260px;
+            min-height: calc(100vh - 70px);
+            padding: 40px;
+            background:
+                radial-gradient(circle at top left, rgba(56,189,248,0.25), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(34,197,94,0.18), transparent 30%),
+                #020617;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid,
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 22px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card,
+        .mission-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 22px;
+            padding: 25px;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.12);
+            transition: 0.3s;
+        }
+
+        .stat-card:hover,
+        .mission-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.32);
+        }
+
+        .stat-card h3,
+        .mission-card h3 {
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .stat-card h2 {
+            font-size: 34px;
+        }
+
+        .mission-card p {
+            color: #cbd5e1;
+            margin: 10px 0;
+        }
+
+        .progress {
+            height: 13px;
+            background: #020617;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 30px;
+            width: 0;
+            transition: width 1s ease-in-out;
+        }
+
+        .xp-fill {
+            background: linear-gradient(90deg, #38bdf8, #22c55e);
+        }
+
+        .health-fill {
+            background: linear-gradient(90deg, #ef4444, #f97316);
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .xp-badge {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            padding: 7px 14px;
+            border-radius: 30px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: 700;
+            margin-top: 15px;
+        }
+
+        .approved {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .submitted {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+        }
+
+        .rejected {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .pending {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            border: none;
+            padding: 11px 18px;
+            border-radius: 12px;
+            color: #020617;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 18px #38bdf8;
+        }
+
+        @media(max-width: 800px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .topbar,
+            .main {
+                margin-left: 0;
+            }
+        }
+
+        #particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
+
+.levelup-popup {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, #38bdf8, #22c55e);
+    color: #020617;
+    padding: 25px 55px;
+    border-radius: 20px;
+    font-size: 32px;
+    font-weight: 900;
+    z-index: 9999;
+    box-shadow: 0 0 40px #38bdf8;
+    animation: levelPop 2.2s ease forwards;
+}
+
+@keyframes levelPop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.4);
+    }
+    20% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+.floating-xp {
+    animation: floatXP 1.8s ease-in-out infinite;
+}
+
+@keyframes floatXP {
+    0% {
+        transform: translateY(0);
+        box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+    }
+    50% {
+        transform: translateY(-6px);
+        box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
+    }
+    100% {
+        transform: translateY(0);
+        box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+    }
+}
+.theme-toggle {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+body.light-mode {
+    background: #f8fafc;
+    color: #020617;
+}
+
+body.light-mode .sidebar,
+body.light-mode .topbar {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+body.light-mode .main {
+    background: linear-gradient(135deg, #e0f2fe, #f8fafc);
+}
+
+body.light-mode .stat-card,
+body.light-mode .mission-card {
+    background: #ffffff;
+    color: #020617;
+    border-color: #bae6fd;
+}
+
+body.light-mode .mission-card p,
+body.light-mode .subtitle,
+body.light-mode .topbar span,
+body.light-mode .sidebar a {
+    color: #334155;
+}
+
+.alert-container {
+    margin-bottom: 20px;
+}
+
+.alert {
+    background: linear-gradient(135deg, #22c55e, #38bdf8);
+    color: #020617;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+<div id="particles-js"></div>
+
+<div class="sidebar">
+    <div class="logo">⚔ BattleMode</div>
+
+    <a href="{% url 'home' %}">🏠 Dashboard</a>
+    <a href="{% url 'missions' %}">🎯 Missions</a>
+    <a href="{% url 'leaderboard' %}">🏆 Leaderboard</a>
+    <a href="{% url 'profile' %}">👤 Profile</a>
+    <a href="{% url 'chat' %}">🤖 Assistant</a>
+</div>
+
+<div class="topbar">
+    <span>Welcome, {{ request.user.username }}</span>
+    <div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</button>
+    <a href="{% url 'logout' %}">Logout</a>
+</div>
+</div>
+
+<div class="main">
+    {% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+    {% block content %}
+    {% endblock %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+
+<script>
+particlesJS("particles-js", {
+  "particles": {
+    "number": { "value": 60 },
+    "size": { "value": 3 },
+    "color": { "value": "#38bdf8" },
+    "line_linked": {
+      "enable": true,
+      "color": "#38bdf8"
+    },
+    "move": { "speed": 2 }
+  }
+});
+</script>
+
+<audio id="click-sound" preload="auto">
+    <source src="{% static 'sounds/click.mp3' %}" type="audio/mpeg">
+</audio>
+
+<audio id="levelup-sound" preload="auto">
+    <source src="{% static 'sounds/levelup.mp3' %}" type="audio/mpeg">
+</audio>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // 🔊 Button click sound
+    document.querySelectorAll('.btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const click = document.getElementById('click-sound');
+            if (click) {
+                click.currentTime = 0;
+                click.play().catch(() => {});
+            }
+        });
+    });
+
+    // ⚡ Level-up sound (UPDATED PART)
+    const levelUpFlag = document.getElementById('levelup-trigger')?.dataset.levelup;
+
+    if (levelUpFlag === "True") {
+        const lvl = document.getElementById('levelup-sound');
+        if (lvl) {
+            setTimeout(() => {
+                lvl.play().catch(() => {});
+            }, 400);
+        }
+    }
+
+});
+</script>
+
+<script>
+function toggleTheme() {
+    document.body.classList.toggle('light-mode');
+
+    if (document.body.classList.contains('light-mode')) {
+        localStorage.setItem('theme', 'light');
+    } else {
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+window.onload = function () {
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+    }
+}
+</script>
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll('.alert').forEach(el => {
+        el.style.display = 'none';
+    });
+}, 3000);
+</script>
+
+</body>
+</html>
