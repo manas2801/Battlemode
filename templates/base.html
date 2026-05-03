@@ -220,17 +220,59 @@
         }
 
         @media(max-width: 800px) {
-            .sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-            }
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
 
-            .topbar,
-            .main {
-                margin-left: 0;
-            }
-        }
+    .logo {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .sidebar a {
+        display: inline-block;
+        font-size: 14px;
+        padding: 10px;
+        margin: 5px;
+    }
+
+    .topbar,
+    .main {
+        margin-left: 0;
+    }
+
+    .topbar {
+        height: auto;
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .main {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .stats-grid,
+    .mission-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card,
+    .mission-card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    .stat-card h2 {
+        font-size: 28px;
+    }
+}
 
         #particles-js {
     position: fixed;
