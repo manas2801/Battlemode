@@ -16,6 +16,15 @@ class Player(models.Model):
         return self.user.username
 
 class Mission(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    xp_reward = models.IntegerField(default=20)
+
+    def __str__(self):
+        return self.title
+
+
+class MissionSubmission(models.Model):
     STATUS_CHOICES = (
         ('pending', 'Pending'),
         ('submitted', 'Submitted'),
@@ -24,47 +33,29 @@ class Mission(models.Model):
     )
 
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    xp_reward = models.IntegerField(default=20)
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     proof_text = models.TextField(blank=True)
     proof_image = models.ImageField(upload_to='mission_proofs/', blank=True, null=True)
 
-from datetime import date, timedelta
+    class Meta:
+        unique_together = ('player', 'mission')
 
-def approve_mission(self):
-    if self.status != 'approved':
-        player = self.player
+    def approve_submission(self):
+        if self.status != 'approved':
+            player = self.player
+            player.xp += self.mission.xp_reward
 
-        # XP logic
-        player.xp += self.xp_reward
+            while player.xp >= 100:
+                player.level += 1
+                player.xp -= 100
 
-        while player.xp >= 100:
-            player.level += 1
-            player.xp -= 100
+            player.health = min(player.health + 5, 100)
+            player.streak += 1
+            player.save()
 
-        # Health increase
-        player.health = min(player.health + 5, 100)
-
-        # 🔥 STREAK LOGIC
-        today = date.today()
-
-        if player.last_active_date == today:
-            pass  # already counted today
-
-        elif player.last_active_date == today - timedelta(days=1):
-            player.streak += 1  # continue streak
-
-        else:
-            player.streak = 1  # reset streak
-
-        player.last_active_date = today
-
-        player.save()
-
-        self.status = 'approved'
-        self.save()
+            self.status = 'approved'
+            self.save()
 
     def __str__(self):
-        return self.title
+        return f"{self.player.user.username} - {self.mission.title}"

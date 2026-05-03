@@ -1,20 +1,24 @@
 from django.contrib import admin
-from .models import Player, Mission
+from .models import Player, Mission, MissionSubmission
 
 @admin.register(Player)
 class PlayerAdmin(admin.ModelAdmin):
     list_display = ('user', 'level', 'xp', 'health', 'streak')
 
 
-@admin.action(description='Approve selected missions and give XP')
-def approve_selected_missions(modeladmin, request, queryset):
-    for mission in queryset:
-        mission.approve_mission()
-
-
 @admin.register(Mission)
 class MissionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'player', 'xp_reward', 'status')
+    list_display = ('title', 'xp_reward')
+
+
+@admin.action(description='Approve selected submissions and give XP')
+def approve_selected_submissions(modeladmin, request, queryset):
+    for submission in queryset:
+        submission.approve_submission()
+
+
+@admin.register(MissionSubmission)
+class MissionSubmissionAdmin(admin.ModelAdmin):
+    list_display = ('player', 'mission', 'status')
     list_filter = ('status',)
-    search_fields = ('title', 'player__user__username')
-    actions = [approve_selected_missions]
+    actions = [approve_selected_submissions]
